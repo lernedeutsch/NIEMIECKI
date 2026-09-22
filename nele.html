@@ -503,7 +503,7 @@ body{
 /* SUGESTIE */
 
 .quick-actions{
-    display:none;
+    display:flex;
     flex-wrap:wrap;
     gap:8px;
 
@@ -773,23 +773,7 @@ body{
                 >
                     Satz korrigieren
                 </button>
-
-
-                <!-- =================================
-                     OSOBNY TRYB WYMOWY
-                ================================== -->
-
-                <button
-                    type="button"
-                    class="quick-action pronunciation-action"
-                    id="pronunciation-btn"
-                    aria-label="Aussprache üben"
-                    title="Aussprache üben"
-                >
-                    🗣️ Aussprache üben
-                </button>
-
-            </div>
+</div>
 
         </div>
 
@@ -800,7 +784,6 @@ body{
 
 
 <script src="./config/app-config.js"></script>
-<script src="./nele/nele-pronunciation.js"></script>
 <script src="./nele/nele.js"></script>
 
 </body>

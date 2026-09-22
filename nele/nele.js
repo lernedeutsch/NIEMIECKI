@@ -189,7 +189,9 @@ const Nele = {
                         this.inputElement.value =
                             text;
 
-                        this.inputElement.focus();
+                        this.sendMessage(
+                            "quick_action"
+                        );
 
                     }
                 );

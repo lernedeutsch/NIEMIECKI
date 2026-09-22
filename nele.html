@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nele</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#061120;color:#eef6ff;min-height:100vh;display:grid;place-items:center}
+main{width:min(720px,92vw);background:#0b1d33;border:1px solid rgba(128,178,240,.18);border-radius:22px;padding:24px}
+h1{margin-top:0}.muted{color:#9fb2cb}.back{display:inline-block;margin-bottom:18px;color:#9fd0ff;text-decoration:none}
+.status{margin:16px 0;padding:12px;border-radius:12px;background:#102743}
+input,button{font:inherit}.row{display:flex;gap:10px}.row input{flex:1;padding:12px;border-radius:12px;border:1px solid #29496d;background:#0d2037;color:#fff}
+button{padding:12px 16px;border:0;border-radius:12px;background:#1e8bff;color:#fff;font-weight:700}
+#messages{display:flex;flex-direction:column;gap:10px;margin:18px 0}.msg{padding:12px 14px;border-radius:14px;background:#12243e}.user{background:#0f63e5;align-self:flex-end}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="./index.html">← Nauka niemieckiego</a>
+<h1>Nele</h1>
+<div class="muted">Deine persönliche Deutschtrainerin</div>
+<div id="status" class="status">Nele startet …</div>
+<div id="messages"></div>
+<form id="form" class="row">
+<input id="input" autocomplete="off" placeholder="Schreib deine Nachricht …">
+<button>Senden</button>
+</form>
+</main>
+<script src="./config/app-config.js"></script>
+<script>
+const API=window.NELE_API_BASE;
+const statusEl=document.getElementById('status');
+const messages=document.getElementById('messages');
+const input=document.getElementById('input');
+const form=document.getElementById('form');
+let studentId=localStorage.getItem('niemiecki_nele_student_id')||crypto.randomUUID();
+localStorage.setItem('niemiecki_nele_student_id',studentId);
+let sessionId=null;
+function add(text,user=false){const d=document.createElement('div');d.className='msg'+(user?' user':'');d.textContent=text;messages.appendChild(d)}
+async function start(){try{const r=await fetch(API+'/api/session/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:studentId})});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();studentId=d.student_id||studentId;sessionId=d.session_id;add(d.reply||'Hallo!');statusEl.textContent='Nele ist bereit'}catch(e){statusEl.textContent='Verbindungsfehler';add('Der Server ist gerade nicht erreichbar.')}}
+form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text)return;input.value='';add(text,true);statusEl.textContent='Nele denkt nach …';try{const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:studentId,session_id:sessionId,message:text})});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();sessionId=d.session_id||sessionId;add(d.reply||'');statusEl.textContent='Nele ist bereit'}catch(e){statusEl.textContent='Verbindungsfehler';add('Ich kann den Server gerade nicht erreichen.')}});start();
+</script>
+</body>
+</html>
